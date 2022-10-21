@@ -17,17 +17,30 @@ class User(AbstractUser):
     email = models.CharField(max_length=254, verbose_name='Почта', unique=True, blank=False)
     password = models.CharField(max_length=254, verbose_name='Пароль', blank=False)
     role = models.CharField(max_length=254, verbose_name='Пароль',
-                            choices=(('admin','Администратор'),('user','Пользователь')), default='user')
+                            choices=(('admin', 'Администратор'), ('user', 'Пользователь')), default='user')
 
     USERNAME_FIELD = 'username'
 
     def __str__(self):
         return str(self.name) + " " + str(self.surname)
 
+
 class Order(models.Model):
     name = models.CharField(max_length=254, verbose_name='Имя', blank=False)
-    description = models.TextField(max_length=254,)
+    description = models.TextField(verbose_name='Описание', blank=True)
     date = models.DateTimeField(verbose_name='Дата добавления', auto_now_add=True)
     photo_file = models.ImageField(max_length=254, upload_to=get_name_file,
                                    blank=True, null=True,
-                                   validators=[FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'bmp'])])
+                                   validators=[
+                                       FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'bmp'])])
+    category = models.ForeignKey('Category', verbose_name='Категория', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=254, verbose_name='Наименование', blank=False)
+
+    def __str__(self):
+        return self.name
