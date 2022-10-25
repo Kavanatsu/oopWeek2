@@ -16,7 +16,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=254, verbose_name='Логин', unique=True, blank=False)
     email = models.CharField(max_length=254, verbose_name='Почта', unique=True, blank=False)
     password = models.CharField(max_length=254, verbose_name='Пароль', blank=False)
-    role = models.CharField(max_length=254, verbose_name='Пароль',
+    role = models.CharField(max_length=254, verbose_name='Роль',
                             choices=(('admin', 'Администратор'), ('user', 'Пользователь')), default='user')
 
     USERNAME_FIELD = 'username'
@@ -26,7 +26,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    name = models.CharField(max_length=254, verbose_name='Имя', blank=False)
+    name = models.CharField(max_length=254, verbose_name='Название', blank=False)
     description = models.TextField(verbose_name='Описание', blank=True)
     date = models.DateTimeField(verbose_name='Дата добавления', auto_now_add=True)
     photo_file = models.ImageField(max_length=254, upload_to=get_name_file,
@@ -34,6 +34,14 @@ class Order(models.Model):
                                    validators=[
                                        FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'bmp'])])
     category = models.ForeignKey('Category', verbose_name='Категория', on_delete=models.CASCADE)
+
+    WORK_STATUS = (
+        ('n', 'Новая'),
+        ('w', 'Принято в работу'),
+        ('d', 'Выполнено'),
+    )
+
+    status = models.CharField(max_length=1, choices=WORK_STATUS, blank=True, default='n', verbose_name='Статус')
 
     def __str__(self):
         return self.name
